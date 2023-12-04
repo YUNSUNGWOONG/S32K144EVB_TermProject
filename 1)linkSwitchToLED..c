@@ -77,8 +77,8 @@ void compareFloors(int c_floor, int d_floor);
 /* Function Definition Section (end)*/
 int main()
 {
-    WDOG_disable();        
-    PORT_init();          
+    PORT_init();
+    WDOG_disable();                  
     SOSC_init_8MHz();      
     SPLL_init_160MHz();    
     NormalRUNmode_80MHz(); 
