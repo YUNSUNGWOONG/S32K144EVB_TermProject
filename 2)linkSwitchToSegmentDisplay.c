@@ -164,25 +164,11 @@ switch (nom)
 }
 void Seg_out(int number)
 {
-    int j;
-    int d10, d1;
-
-    d10 = number % 100 / 10;
-    d1 = number % 10;
-
-    for (j = 0; j < 10; j++)
+    for (int j = 0; j < 10; j++)
     {
-
-        // 10
-        num(d10);
-        PTE->PSOR |= 1 << 10;
-        PTE->PCOR |= 1 << 8;
-        delay_ms(2);
-
         // 1
-        num(d1);
-        PTE->PCOR |= 1 << 10;
-        PTE->PSOR |= 1 <<  8;
+        num(number);
+        PTE->PSOR |= 1 << 8;
         delay_ms(2);
     }
 }
