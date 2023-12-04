@@ -135,25 +135,25 @@ int main()
 void toggleLEDsInCycle()
 {
     // ON -> Wait -> OFF
-    PTD->PCOR |= (1 << PTD8);delay_ms(500);PTD->PSOR |= (1 << PTD8);
-    PTD->PCOR |= (1 << PTD7);delay_ms(500);PTD->PSOR |= (1 << PTD7);
-    PTD->PCOR |= (1 << PTD6);delay_ms(500);PTD->PSOR |= (1 << PTD6);
-    PTD->PCOR |= (1 << PTD5);delay_ms(500);PTD->PSOR |= (1 << PTD5);
-    PTD->PCOR |= (1 << PTD4);delay_ms(500);PTD->PSOR |= (1 << PTD4);
-    PTD->PCOR |= (1 << PTD3);delay_ms(500);PTD->PSOR |= (1 << PTD3);
-    PTD->PCOR |= (1 << PTD2);delay_ms(500);PTD->PSOR |= (1 << PTD2);
-    PTD->PCOR |= (1 << PTD1);delay_ms(500);PTD->PSOR |= (1 << PTD1);
+    PTD->PCOR |= (1 << PTD8);delay_ms(200);PTD->PSOR |= (1 << PTD8);
+    PTD->PCOR |= (1 << PTD7);delay_ms(200);PTD->PSOR |= (1 << PTD7);
+    PTD->PCOR |= (1 << PTD6);delay_ms(200);PTD->PSOR |= (1 << PTD6);
+    PTD->PCOR |= (1 << PTD5);delay_ms(200);PTD->PSOR |= (1 << PTD5);
+    PTD->PCOR |= (1 << PTD4);delay_ms(200);PTD->PSOR |= (1 << PTD4);
+    PTD->PCOR |= (1 << PTD3);delay_ms(200);PTD->PSOR |= (1 << PTD3);
+    PTD->PCOR |= (1 << PTD2);delay_ms(200);PTD->PSOR |= (1 << PTD2);
+    PTD->PCOR |= (1 << PTD1);delay_ms(200);PTD->PSOR |= (1 << PTD1);
 }
 void compareFloors(int c_floor, int d_floor)
 {
     if(c_floor < d_floor)
     {
-        for(int i = c_floor; i<= d_floor; i++)
+        for(int i = c_floor+1; i<= d_floor; i++)
         {
             toggleLEDsInCycle();
         }
     } else if(c_floor > d_floor){
-        for(int i = c_floor; i>=d_floor; i--)
+        for(int i = c_floor-1; i>=d_floor; i--)
         {
             toggleLEDsInCycle();
         }
@@ -161,5 +161,4 @@ void compareFloors(int c_floor, int d_floor)
     c_floor = d_floor;
 }
 /* Function Implementation Section (end)*/
-
 
