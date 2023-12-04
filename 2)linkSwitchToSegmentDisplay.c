@@ -9,7 +9,7 @@ void PORT_init(void)
     PCC->PCCn[PCC_PORTE_INDEX] = PCC_PCCn_CGC_MASK; 
 
     PTE->PDDR |=
-        1 << 1 | 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 | 1 << 6 | 1 << 7 | 1 << 11; 
+        1 << 1 | 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 | 1 << 6 | 1 << 7 | 1 << 8; 
 
     PORTE->PCR[1] = PORT_PCR_MUX(1);                                  
     PORTE->PCR[2] = PORT_PCR_MUX(1);                                  
@@ -18,7 +18,7 @@ void PORT_init(void)
     PORTE->PCR[5] = PORT_PCR_MUX(1);                                  
     PORTE->PCR[6] = PORT_PCR_MUX(1);                                  
     PORTE->PCR[7] = PORT_PCR_MUX(1);                                 
-    PORTE->PCR[11] = PORT_PCR_MUX(1); /* Port D11: MUX = GPIO */
+    PORTE->PCR[8] = PORT_PCR_MUX(1); /* Port D11: MUX = GPIO */
 }
 
 void LPIT0_init(uint32_t delay)
@@ -50,7 +50,7 @@ void Seg_out(int number);
 
 int main(void)
 {
-    int count = 94;
+    int count = 3;
 
     PORT_init();           /* Configure ports */
     SOSC_init_8MHz();      /* Initialize system oscilator for 8 MHz xtal */
@@ -176,13 +176,13 @@ void Seg_out(int number)
         // 10
         num(d10);
         PTE->PSOR |= 1 << 10;
-        PTE->PCOR |= 1 << 11;
+        PTE->PCOR |= 1 << 8;
         delay_ms(2);
 
         // 1
         num(d1);
         PTE->PCOR |= 1 << 10;
-        PTE->PSOR |= 1 << 11;
+        PTE->PSOR |= 1 <<  8;
         delay_ms(2);
     }
 }
