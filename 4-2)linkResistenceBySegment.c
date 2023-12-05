@@ -80,16 +80,16 @@ int main(void)
     SPLL_init_160MHz();    /* Initialize SPLL to 160 MHz with 8 MHz SOSC */
     NormalRUNmode_80MHz(); /* Init clocks: 80 MHz sysclk & core, 40 MHz bus, 20 MHz flash */
 
-		FTM_init();
-		ADC_init(); 
-		
-		delay_ms(500);
+    FTM_init();
+    ADC_init(); 	
+    delay_ms(500);
+	
     //Ready 
-		for(int i=5; i>0; i--){
-			Seg_out(i);
-			delay_ms(1000);
-		}
-		//& Start
+    for(int i=5; i>0; i--){
+	Seg_out(i);
+	delay_ms(1000);
+    }
+    //& Start
     while (1)
     {
 			
