@@ -4,7 +4,13 @@
 //#include "math.h"
 int lpit0_ch0_flag_counter = 0; /*< LPIT0 timeout counter */
 
+ void PORT_init (void)
+{
 
+  PCC->PCCn[PCC_PORTD_INDEX ]|=PCC_PCCn_CGC_MASK;   
+  PORTD->PCR[0]|=PORT_PCR_MUX(2);           		
+  PORTD->PCR[1]|=PORT_PCR_MUX(2);           		
+}
 
 
 void LPIT0_init (uint32_t delay)
@@ -45,17 +51,6 @@ void FTM_init (void){
 	FTM0->SC|=FTM_SC_CLKS(3);
 
 }
-
-
- void PORT_init (void)
-{
-
-  PCC->PCCn[PCC_PORTD_INDEX ]|=PCC_PCCn_CGC_MASK;   
-  PORTD->PCR[0]|=PORT_PCR_MUX(2);           		
-  PORTD->PCR[1]|=PORT_PCR_MUX(2);           		
-}
-
-
 
 
 int main(void)
