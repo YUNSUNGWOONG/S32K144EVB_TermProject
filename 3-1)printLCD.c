@@ -3,47 +3,45 @@
 #include "lcd1602A.h"
 #include <stdio.h>
 
+
 int lpit0_ch0_flag_counter = 0; /*< LPIT0 timeout counter */
 
 unsigned int i = 0;
 
+void LPIT0_init (uint32_t delay);
+
 void PORT_init (void)
 {
-    // LCD
-    PTC->PDDR |= 1<<9 | 1<<10 | 1<<11 | 1<<12 | 1<<13 | 1<<14 | 1<<15;
+	  //LCD
+    PTD->PDDR |= 1<<9 | 1<<10 | 1<<11 | 1<<12 | 1<<13 | 1<<14 | 1<<15;
 
-    PCC->PCCn[PCC_PORTC_INDEX] &= ~PCC_PCCn_CGC_MASK;
-    PCC->PCCn[PCC_PORTC_INDEX] |= PCC_PCCn_PCS(0x001);
-    PCC->PCCn[PCC_PORTC_INDEX] |= PCC_PCCn_CGC_MASK;
+    PCC->PCCn[PCC_PORTD_INDEX] &= ~PCC_PCCn_CGC_MASK;
+    PCC->PCCn[PCC_PORTD_INDEX] |= PCC_PCCn_PCS(0x001);
+    PCC->PCCn[PCC_PORTD_INDEX] |= PCC_PCCn_CGC_MASK;
     PCC->PCCn[PCC_FTM2_INDEX]  &= ~PCC_PCCn_CGC_MASK;
     PCC->PCCn[PCC_FTM2_INDEX]  |= (PCC_PCCn_PCS(1)| PCC_PCCn_CGC_MASK);		//Clock = 80MHz
 
     //Pin mux
-    PORTC->PCR[9]= PORT_PCR_MUX(1);
-    PORTC->PCR[10]= PORT_PCR_MUX(1);
-    PORTC->PCR[11]= PORT_PCR_MUX(1);
-    PORTC->PCR[12]= PORT_PCR_MUX(1);
-    PORTC->PCR[13]= PORT_PCR_MUX(1);
-    PORTC->PCR[14]= PORT_PCR_MUX(1);
-    PORTC->PCR[15]= PORT_PCR_MUX(1);
+    PORTD->PCR[9]= PORT_PCR_MUX(1);
+    PORTD->PCR[10]= PORT_PCR_MUX(1);
+    PORTD->PCR[11]= PORT_PCR_MUX(1);
+    PORTD->PCR[12]= PORT_PCR_MUX(1);
+    PORTD->PCR[13]= PORT_PCR_MUX(1);
+    PORTD->PCR[14]= PORT_PCR_MUX(1);
+    PORTD->PCR[15]= PORT_PCR_MUX(1);
 
     //Output set(set 4bit, 2line - 0b 0010 0101 000x xxxx)
 
 }
 
 void WDOG_disable (void){
-	  WDOG->CNT=0xD928C520;    
-	  WDOG->TOVAL=0x0000FFFF;   
-	  WDOG->CS = 0x00002100;    
-}
+	  WDOG->CNT=0xD928C520;     /* Unlock watchdog */
+	  WDOG->TOVAL=0x0000FFFF;   /* Maximum timeout value */
+	  WDOG->CS = 0x00002100;    /* Disable watchdog */
+	}
 
 
-void delay_ms (uint32_t ms){
-	 LPIT0_init(ms);           /* Initialize PIT0 for delay time, timeout  */
-   while (0 == (LPIT0->MSR & LPIT_MSR_TIF0_MASK)) {} /* Wait for LPIT0 CH0 Flag */
-   lpit0_ch0_flag_counter++;         /* Increment LPIT0 timeout counter */
-               LPIT0->MSR |= LPIT_MSR_TIF0_MASK; /* Clear LPIT0 timer flag 0 */
-}
+
 
 
 
@@ -77,7 +75,12 @@ void LPIT0_init (uint32_t delay){
                               /* TRG_SRC=0: External trigger soruce */
                               /* TRG_SEL=0: Timer chan 0 trigger source is selected*/
 }
-
+void delay_ms (uint32_t ms){
+	 LPIT0_init(ms);           /* Initialize PIT0 for delay time, timeout  */
+   while (0 == (LPIT0->MSR & LPIT_MSR_TIF0_MASK)) {} /* Wait for LPIT0 CH0 Flag */
+   lpit0_ch0_flag_counter++;         /* Increment LPIT0 timeout counter */
+               LPIT0->MSR |= LPIT_MSR_TIF0_MASK; /* Clear LPIT0 timer flag 0 */
+}
 
 
 
@@ -99,7 +102,7 @@ int main(void)
 	char msg_array1[16]={0x20,0x2d,0x2d,0x2d,0x57,0x65,0x6c,0x63,0x6f,0x6d,0x65,0x2d,0x2d,0x2d};  // 1-row text-char
 	
 	char msg_array2[16]={0x20,0x20,0x53, 0x45, 0x4c, 0x45, 0x43,0x54,0x20,0x46,0x4c,0x4f,0x4f,0x52}; // 2-row text-char
-	
+
 	lcdinit();        /* Initialize LCD1602A module*/
 
 	delay_ms(200);
@@ -107,7 +110,7 @@ int main(void)
 		//text-char output
 		while(msg_array1[i] != '\0'){
 			lcdcharinput(msg_array1[i]); // 1(first) row text-char send to LCD module
-			delay_ms(10);
+			delay_ms(800);
 			i++;
 
 		}
@@ -117,17 +120,17 @@ int main(void)
 			i=0;
 			while(msg_array2[i] != '\0'){
 				lcdcharinput(msg_array2[i]);// 2(second) row text-char send to LCD module
-				delay_ms(50);
+				delay_ms(800);
 				i++;
 			}
 
 
 	//Lcd off, LCD display clear
-	//delay_ms(2000);
-	//lcdinput(0x08);	//lcd display off
-	//delay_ms(400);
-	//lcdinput(0x01);	//Clear display
-	//delay_ms(200);
+	delay_ms(2000);
+	lcdinput(0x08);	//lcd display off
+	delay_ms(400);
+	lcdinput(0x01);	//Clear display
+	delay_ms(200);
 
 	return 0;
 }
