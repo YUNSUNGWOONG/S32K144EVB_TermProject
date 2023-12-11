@@ -1,7 +1,7 @@
 #include "clocks_and_modes.h"
 #include "device_registers.h"
 
-//LED
+// LED
 #define PTD1 1
 #define PTD2 2
 #define PTD3 3
@@ -11,18 +11,18 @@
 #define PTD7 7
 #define PTD8 8
 
-//SWITCH
+// SWITCH
 #define PTD10 10
 #define PTD11 11
 #define PTD12 12
 #define PTD13 13
 #define PTD14 14
 
-int lpit0_ch0_flag_counter = 0; 
+int lpit0_ch0_flag_counter = 0;
 
 void PORT_init(void)
 {
-		//LED
+    // LED
     PCC->PCCn[PCC_PORTD_INDEX] |= PCC_PCCn_CGC_MASK;
     PTD->PDDR |= 1 << 1 | 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 | 1 << 6 | 1 << 7 | 1 << 8;
     PORTD->PCR[1] = PORT_PCR_MUX(1);
@@ -34,7 +34,7 @@ void PORT_init(void)
     PORTD->PCR[7] = PORT_PCR_MUX(1);
     PORTD->PCR[8] = PORT_PCR_MUX(1);
 
-    //SWITCH
+    // SWITCH
     PCC->PCCn[PCC_PORTD_INDEX] |= PCC_PCCn_CGC_MASK;
     PTD->PDDR &= ~((unsigned int)1 << PTD10);
     PTD->PDDR &= ~((unsigned int)1 << PTD11);
@@ -46,114 +46,108 @@ void PORT_init(void)
     PORTD->PCR[12] = PORT_PCR_MUX(1);
     PORTD->PCR[13] = PORT_PCR_MUX(1);
     PORTD->PCR[14] = PORT_PCR_MUX(1);
-		
-		//SEGMENT
-    PCC->PCCn[PCC_PORTE_INDEX] = PCC_PCCn_CGC_MASK; 
-    PTE->PDDR |=
-        1 << 1 | 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 | 1 << 6 | 1 << 7 | 1 << 8; 
-    PORTE->PCR[1] = PORT_PCR_MUX(1);                                  
-    PORTE->PCR[2] = PORT_PCR_MUX(1);                                  
-    PORTE->PCR[3] = PORT_PCR_MUX(1);                                  
-    PORTE->PCR[4] = PORT_PCR_MUX(1);                                  
-    PORTE->PCR[5] = PORT_PCR_MUX(1);                                  
-    PORTE->PCR[6] = PORT_PCR_MUX(1);                                  
-    PORTE->PCR[7] = PORT_PCR_MUX(1);                                 
-    PORTE->PCR[8] = PORT_PCR_MUX(1); 
+
+    // SEGMENT
+    PCC->PCCn[PCC_PORTE_INDEX] = PCC_PCCn_CGC_MASK;
+    PTE->PDDR |= 1 << 1 | 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 | 1 << 6 | 1 << 7 | 1 << 8;
+    PORTE->PCR[1] = PORT_PCR_MUX(1);
+    PORTE->PCR[2] = PORT_PCR_MUX(1);
+    PORTE->PCR[3] = PORT_PCR_MUX(1);
+    PORTE->PCR[4] = PORT_PCR_MUX(1);
+    PORTE->PCR[5] = PORT_PCR_MUX(1);
+    PORTE->PCR[6] = PORT_PCR_MUX(1);
+    PORTE->PCR[7] = PORT_PCR_MUX(1);
+    PORTE->PCR[8] = PORT_PCR_MUX(1);
 }
 void WDOG_disable(void)
 {
-    WDOG->CNT = 0xD928C520;WDOG->TOVAL = 0x0000FFFF;WDOG->CS = 0x00002100;
+    WDOG->CNT = 0xD928C520;
+    WDOG->TOVAL = 0x0000FFFF;
+    WDOG->CS = 0x00002100;
 }
 void LPIT0_init(uint32_t delay)
 {
     uint32_t timeout;
-    PCC->PCCn[PCC_LPIT_INDEX] = PCC_PCCn_PCS(6);    
-    PCC->PCCn[PCC_LPIT_INDEX] |= PCC_PCCn_CGC_MASK; 
-    LPIT0->MCR |= LPIT_MCR_M_CEN_MASK; 
+    PCC->PCCn[PCC_LPIT_INDEX] = PCC_PCCn_PCS(6);
+    PCC->PCCn[PCC_LPIT_INDEX] |= PCC_PCCn_CGC_MASK;
+    LPIT0->MCR |= LPIT_MCR_M_CEN_MASK;
     timeout = delay * 40000;
-    LPIT0->TMR[0].TVAL = timeout; 
-    LPIT0->TMR[0].TCTRL |= 0x11 | LPIT_TMR_TCTRL_T_EN_MASK;  
+    LPIT0->TMR[0].TVAL = timeout;
+    LPIT0->TMR[0].TCTRL |= 0x11 | LPIT_TMR_TCTRL_T_EN_MASK;
 }
 void delay_ms(volatile int ms)
 {
-    LPIT0_init(ms); 
-    while (0 == (LPIT0->MSR & 0x01 ))
+    LPIT0_init(ms);
+    while (0 == (LPIT0->MSR & 0x01))
     {
-    }                         
-    lpit0_ch0_flag_counter++; 
-    LPIT0->MSR |= 0x00 | LPIT_MSR_TIF0_MASK; 
+    }
+    lpit0_ch0_flag_counter++;
+    LPIT0->MSR |= 0x00 | LPIT_MSR_TIF0_MASK;
 }
-
 
 /* Function Definition Section (start)*/
 void toggleLEDsInCycle();
-void num(int nom); // FND_DATA(number)
+void num(int nom);        // FND_DATA(number)
 void Seg_out(int number); // DIGIT_SELECT
-//void compareFloors(int c_floor, int d_floor);
-void compareFloors(int* c_floor, int* d_floor);
+// void compareFloors(int c_floor, int d_floor);
+void compareFloors(int *c_floor, int *d_floor);
 /* Function Definition Section (end)*/
 int main(void)
 {
-		
-		
-		
-    PORT_init();          
-    WDOG_disable();   
-    SOSC_init_8MHz();      
-    SPLL_init_160MHz();    
+
+    PORT_init();
+    WDOG_disable();
+    SOSC_init_8MHz();
+    SPLL_init_160MHz();
     NormalRUNmode_80MHz();
-		
-		/* LED_Init */
-    PTD->PSOR |= (1 << PTD1) | (1 << PTD2) | (1 << PTD3) | (1 << PTD4) | (1 << PTD5) | (1 << PTD6) |(1 << PTD7) | (1 << PTD8); 
+
+    /* LED_Init */
+    PTD->PSOR |=
+        (1 << PTD1) | (1 << PTD2) | (1 << PTD3) | (1 << PTD4) | (1 << PTD5) | (1 << PTD6) | (1 << PTD7) | (1 << PTD8);
 
     int c_floor = 1;
     int d_floor;
     int error = 0;
 
-    Seg_out(c_floor); // Initially located on the first floor
-		
-		//Ready 
-    for(int i=5; i>0; i--){
-			Seg_out(i);
-			delay_ms(1000);
+    // Ready
+    for (int i = 5; i > 0; i--)
+    {
+        Seg_out(i);
+        delay_ms(1000);
     }
     //& Start
+    Seg_out(c_floor); // Initially located on the first floor
     while (1)
     {
         // button 1 press
         if (!(PTD->PDIR & (1 << PTD10)))
         {
-            d_floor = 1 ;
+            d_floor = 1;
             compareFloors(&c_floor, &d_floor);
-            
         }
         // button 2 press
         if (!(PTD->PDIR & (1 << PTD11)))
         {
-            d_floor = 2 ;
+            d_floor = 2;
             compareFloors(&c_floor, &d_floor);
-
         }
         // button 3 press
         if (!(PTD->PDIR & (1 << PTD12)))
         {
-            d_floor = 3 ;
+            d_floor = 3;
             compareFloors(&c_floor, &d_floor);
-
         }
         // button 4 press
         if (!(PTD->PDIR & (1 << PTD13)))
         {
-            d_floor = 4 ;
+            d_floor = 4;
             compareFloors(&c_floor, &d_floor);
-
         }
         // button 5 press
         if (!(PTD->PDIR & (1 << PTD14)))
         {
-            d_floor = 5 ;
+            d_floor = 5;
             compareFloors(&c_floor, &d_floor);
-
         }
     }
 }
@@ -162,20 +156,36 @@ int main(void)
 void toggleLEDsInCycle()
 {
     // ON -> Wait -> OFF
-    PTD->PCOR |= (1 << PTD8);delay_ms(200);PTD->PSOR |= (1 << PTD8);
-    PTD->PCOR |= (1 << PTD7);delay_ms(200);PTD->PSOR |= (1 << PTD7);
-    PTD->PCOR |= (1 << PTD6);delay_ms(200);PTD->PSOR |= (1 << PTD6);
-    PTD->PCOR |= (1 << PTD5);delay_ms(200);PTD->PSOR |= (1 << PTD5);
-    PTD->PCOR |= (1 << PTD4);delay_ms(200);PTD->PSOR |= (1 << PTD4);
-    PTD->PCOR |= (1 << PTD3);delay_ms(200);PTD->PSOR |= (1 << PTD3);
-    PTD->PCOR |= (1 << PTD2);delay_ms(200);PTD->PSOR |= (1 << PTD2);
-    PTD->PCOR |= (1 << PTD1);delay_ms(200);PTD->PSOR |= (1 << PTD1);
+    PTD->PCOR |= (1 << PTD8);
+    delay_ms(200);
+    PTD->PSOR |= (1 << PTD8);
+    PTD->PCOR |= (1 << PTD7);
+    delay_ms(200);
+    PTD->PSOR |= (1 << PTD7);
+    PTD->PCOR |= (1 << PTD6);
+    delay_ms(200);
+    PTD->PSOR |= (1 << PTD6);
+    PTD->PCOR |= (1 << PTD5);
+    delay_ms(200);
+    PTD->PSOR |= (1 << PTD5);
+    PTD->PCOR |= (1 << PTD4);
+    delay_ms(200);
+    PTD->PSOR |= (1 << PTD4);
+    PTD->PCOR |= (1 << PTD3);
+    delay_ms(200);
+    PTD->PSOR |= (1 << PTD3);
+    PTD->PCOR |= (1 << PTD2);
+    delay_ms(200);
+    PTD->PSOR |= (1 << PTD2);
+    PTD->PCOR |= (1 << PTD1);
+    delay_ms(200);
+    PTD->PSOR |= (1 << PTD1);
 }
 void num(int nom)
 {
-switch (nom)
+    switch (nom)
     {
-	/*PSOR: set 1 -> ON, PCOR: set 0 -> OFF */
+    /*PSOR: set 1 -> ON, PCOR: set 0 -> OFF */
     case 0:
         PTE->PSOR |= 1 << 1; // PTE1; // FND A ON
         PTE->PSOR |= 1 << 2; // PTE2; // FND B ON
@@ -282,54 +292,53 @@ void Seg_out(int number)
 void compareFloors(int c_floor, int d_floor)
 {
     Seg_out(c_floor);
-		
+
     if(c_floor < d_floor)
     {
         for(int i = c_floor+1; i<= d_floor; i++)
         {
-						toggleLEDsInCycle();
+                        toggleLEDsInCycle();
             Seg_out(i);
             delay_ms(1000);
         }
-    } 
-		else if(c_floor > d_floor){
+    }
+        else if(c_floor > d_floor){
         for(int i = c_floor-1; i>=d_floor; i--)
         {
-						Seg_out(7);
-						delay_ms(1000);
-						toggleLEDsInCycle();
+                        Seg_out(7);
+                        delay_ms(1000);
+                        toggleLEDsInCycle();
             Seg_out(i);
         }
     }
     c_floor = d_floor;
-	
-		
+
+
 }
 */
-void compareFloors(int* c_floor, int* d_floor)
+void compareFloors(int *c_floor, int *d_floor)
 {
     Seg_out(*c_floor);
-		
-    if(*c_floor < *d_floor)
+
+    if (*c_floor < *d_floor)
     {
-        for(int i = *c_floor+1; i<= *d_floor; i++)
+        for (int i = *c_floor + 1; i <= *d_floor; i++)
         {
-						toggleLEDsInCycle();
+            toggleLEDsInCycle();
             Seg_out(i);
             delay_ms(1000);
         }
-    } 
-		else if(*c_floor > *d_floor){
-        for(int i = *c_floor-1; i>=*d_floor; i--)
-        {						
-						toggleLEDsInCycle();
+    }
+    else if (*c_floor > *d_floor)
+    {
+        for (int i = *c_floor - 1; i >= *d_floor; i--)
+        {
+            toggleLEDsInCycle();
             Seg_out(i);
-						delay_ms(1000);
+            delay_ms(1000);
         }
     }
     *c_floor = *d_floor;
-	
-		
 }
 
 /* Function Implementation Section (end)*/
