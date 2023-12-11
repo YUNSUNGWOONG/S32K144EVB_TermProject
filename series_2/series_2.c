@@ -1,5 +1,7 @@
 #include "clocks_and_modes.h"
 #include "device_registers.h"
+#include "lcd1602A.h"
+#include <stdio.h>
 
 // LED
 #define PTC1 1
@@ -63,6 +65,21 @@ void PORT_init(void)
     PORTD->PCR[4] = PORT_PCR_MUX(1);
     PORTD->PCR[5] = PORT_PCR_MUX(1);
 
+    // LCD_DISPLAY
+    PCC->PCCn[PCC_PORTD_INDEX] &= ~PCC_PCCn_CGC_MASK;
+    PCC->PCCn[PCC_PORTD_INDEX] |= PCC_PCCn_PCS(0x001);
+    PCC->PCCn[PCC_PORTD_INDEX] |= PCC_PCCn_CGC_MASK;
+    PCC->PCCn[PCC_FTM2_INDEX] &= ~PCC_PCCn_CGC_MASK;
+    PCC->PCCn[PCC_FTM2_INDEX] |= (PCC_PCCn_PCS(1) | PCC_PCCn_CGC_MASK);
+    PTD->PDDR |= 1 << PTD9 | 1 << PTD10 | 1 << PTD11 | 1 << PTD12 | 1 << PTD13 | 1 << PTD14 | 1 << PTD15;
+    PORTD->PCR[9] = PORT_PCR_MUX(1);
+    PORTD->PCR[10] = PORT_PCR_MUX(1);
+    PORTD->PCR[11] = PORT_PCR_MUX(1);
+    PORTD->PCR[12] = PORT_PCR_MUX(1);
+    PORTD->PCR[13] = PORT_PCR_MUX(1);
+    PORTD->PCR[14] = PORT_PCR_MUX(1);
+    PORTD->PCR[15] = PORT_PCR_MUX(1);
+
     // SEGMENT
     PCC->PCCn[PCC_PORTE_INDEX] = PCC_PCCn_CGC_MASK;
     PTE->PDDR |= 1 << PTE1 | 1 << PTE1 | 1 << PTE3 | 1 << PTE4 | 1 << PTE5 | 1 << PTE6 | 1 << PTE7 | 1 << PTE8;
@@ -106,6 +123,10 @@ void reToggleLEDsInCycle();
 void num(int nom);        // FND_DATA(number)
 void Seg_out(int number); // DIGIT_SELECT
 void compareFloors(int *c_floor, int *d_floor);
+void lcdInitialize();
+void lcdGoingDown();
+void lcdGoingUp();
+void lcdDoorOpenAndClose();
 /* Function Definition Section (end)*/
 int main(void)
 {
@@ -114,10 +135,21 @@ int main(void)
     SOSC_init_8MHz();
     SPLL_init_160MHz();
     NormalRUNmode_80MHz();
+    SystemCoreClockUpdate();
+    delay_ms(20);
 
     /* LED_Init */
     PTC->PSOR |=
         (1 << PTC1) | (1 << PTC2) | (1 << PTC3) | (1 << PTC5) | (1 << PTC7) | (1 << PTC8) | (1 << PTC9) | (1 << PTC10);
+    /* TEXT_Store */
+    char msg_array1[16] = {0x20, 0x2d, 0x2d, 0x2d, 0x57, 0x65, 0x6c,
+                           0x63, 0x6f, 0x6d, 0x65, 0x2d, 0x2d, 0x2d}; // 1-row text-char
+
+    char msg_array2[16] = {0x20, 0x20, 0x53, 0x45, 0x4c, 0x45, 0x43,
+                           0x54, 0x20, 0x46, 0x4c, 0x4f, 0x4f, 0x52}; // 2-row text-char
+
+    lcdinit();
+    delay_ms(200);
 
     int c_floor = 1;
     int d_floor;
@@ -131,6 +163,7 @@ int main(void)
     }
     //& Start
     Seg_out(c_floor); // Initially located on the first floor
+    // lcdInitialize(); -> lcd에 해당 화면이 지속적으로 출력되는지 확인하기!
     while (1)
     {
         // button 1 press
@@ -335,24 +368,64 @@ void compareFloors(int *c_floor, int *d_floor)
 {
     Seg_out(*c_floor);
 
-    if (*c_floor < *d_floor)
+    if (*c_floor < *d_floor) // -> GOIND UP
     {
+        // lcdGoingUp();
         for (int i = *c_floor + 1; i <= *d_floor; i++)
         {
             toggleLEDsInCycle();
             Seg_out(i);
             delay_ms(1000);
         }
+        // lcdDoorOpenAndClose();
     }
-    else if (*c_floor > *d_floor)
+    else if (*c_floor > *d_floor) // -> GOING DOWN
     {
+        // lcdGoingDown();
         for (int i = *c_floor - 1; i >= *d_floor; i--)
         {
             reToggleLEDsInCycle();
             Seg_out(i);
             delay_ms(1000);
         }
+        // lcdDoorOpenAndClose();
     }
     *c_floor = *d_floor;
+}
+void lcdInitialize()
+{
+    // text-char output
+    while (msg_array1[i] != '\0')
+    {
+        lcdcharinput(msg_array1[i]); // 1(first) row text-char send to LCD module
+        delay_ms(800);
+        i++;
+    }
+
+    lcdinput(0x80 + 0x40); // second row
+    delay_ms(200);
+    i = 0;
+    while (msg_array2[i] != '\0')
+    {
+        lcdcharinput(msg_array2[i]); // 2(second) row text-char send to LCD module
+        delay_ms(800);
+        i++;
+    }
+
+    // Lcd off, LCD display clear
+    delay_ms(2000);
+    lcdinput(0x08); // lcd display off
+    delay_ms(400);
+    lcdinput(0x01); // Clear display
+    delay_ms(200);
+}
+void lcdGoingUp()
+{
+}
+void lcdGoingDown()
+{
+}
+void lcdDoorOpenAndClose()
+{
 }
 /* Function Implementation Section (end)*/
