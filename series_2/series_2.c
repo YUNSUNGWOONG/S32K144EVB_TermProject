@@ -2,54 +2,70 @@
 #include "device_registers.h"
 
 // LED
+#define PTC1 1
+#define PTC2 2
+#define PTC3 3
+#define PTC5 5
+#define PTC7 7
+#define PTC8 8
+#define PTC9 9
+#define PTC10 10
+
+// SWITCH
 #define PTD1 1
 #define PTD2 2
 #define PTD3 3
 #define PTD4 4
 #define PTD5 5
-#define PTD6 6
-#define PTD7 7
-#define PTD8 8
 
-// SWITCH
+// SEGMENT
+#define PTE1 1
+#define PTE2 2
+#define PTE3 3
+#define PTE4 4
+#define PTE5 5
+#define PTE6 6
+#define PTE7 7
+#define PTE8 8
+
+// LCD_DISPLAY
+#define PTD9 9
 #define PTD10 10
 #define PTD11 11
 #define PTD12 12
 #define PTD13 13
 #define PTD14 14
+#define PTD15 15
 
 int lpit0_ch0_flag_counter = 0;
 
 void PORT_init(void)
 {
     // LED
+    PCC->PCCn[PCC_PORTC_INDEX] |= PCC_PCCn_CGC_MASK;
+    PTC->PDDR |= 1 << PTC1 | 1 << PTC2 | 1 << PTC3 | 1 << PTC5 | 1 << PTC7 | 1 << PTC8 | 1 << PTC9 | 1 << PTC10;
+    PORTC->PCR[1] = PORT_PCR_MUX(1);
+    PORTC->PCR[2] = PORT_PCR_MUX(1);
+    PORTC->PCR[3] = PORT_PCR_MUX(1);
+    PORTC->PCR[5] = PORT_PCR_MUX(1);
+    PORTC->PCR[7] = PORT_PCR_MUX(1);
+    PORTC->PCR[8] = PORT_PCR_MUX(1);
+    PORTC->PCR[9] = PORT_PCR_MUX(1);
+    PORTC->PCR[10] = PORT_PCR_MUX(1);
+
+    // SWITCH
     PCC->PCCn[PCC_PORTD_INDEX] |= PCC_PCCn_CGC_MASK;
-    PTD->PDDR |= 1 << 1 | 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 | 1 << 6 | 1 << 7 | 1 << 8;
+    PTD->PDDR &= ~((unsigned int)1 << PTD1) & ~((unsigned int)1 << PTD2) & ~((unsigned int)1 << PTD3) &
+                 ~((unsigned int)1 << PTD4) & ~((unsigned int)1 << PTD5);
     PORTD->PCR[1] = PORT_PCR_MUX(1);
     PORTD->PCR[2] = PORT_PCR_MUX(1);
     PORTD->PCR[3] = PORT_PCR_MUX(1);
     PORTD->PCR[4] = PORT_PCR_MUX(1);
     PORTD->PCR[5] = PORT_PCR_MUX(1);
-    PORTD->PCR[6] = PORT_PCR_MUX(1);
-    PORTD->PCR[7] = PORT_PCR_MUX(1);
-    PORTD->PCR[8] = PORT_PCR_MUX(1);
-
-    // SWITCH
-    PCC->PCCn[PCC_PORTD_INDEX] |= PCC_PCCn_CGC_MASK;
-    PTD->PDDR &= ~((unsigned int)1 << PTD10);
-    PTD->PDDR &= ~((unsigned int)1 << PTD11);
-    PTD->PDDR &= ~((unsigned int)1 << PTD12);
-    PTD->PDDR &= ~((unsigned int)1 << PTD13);
-    PTD->PDDR &= ~((unsigned int)1 << PTD14);
-    PORTD->PCR[10] = PORT_PCR_MUX(1);
-    PORTD->PCR[11] = PORT_PCR_MUX(1);
-    PORTD->PCR[12] = PORT_PCR_MUX(1);
-    PORTD->PCR[13] = PORT_PCR_MUX(1);
-    PORTD->PCR[14] = PORT_PCR_MUX(1);
 
     // SEGMENT
     PCC->PCCn[PCC_PORTE_INDEX] = PCC_PCCn_CGC_MASK;
-    PTE->PDDR |= 1 << 1 | 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 | 1 << 6 | 1 << 7 | 1 << 8;
+    PTE->PDDR |= 1 << PTE1 | 1 << PTE1 | 1 << PTE3 | 1 << PTE4 | 1 << PTE5 | 1 << PTE6 | 1 << PTE7 | 1 << PTE8;
     PORTE->PCR[1] = PORT_PCR_MUX(1);
     PORTE->PCR[2] = PORT_PCR_MUX(1);
     PORTE->PCR[3] = PORT_PCR_MUX(1);
@@ -100,8 +116,8 @@ int main(void)
     NormalRUNmode_80MHz();
 
     /* LED_Init */
-    PTD->PSOR |=
-        (1 << PTD1) | (1 << PTD2) | (1 << PTD3) | (1 << PTD4) | (1 << PTD5) | (1 << PTD6) | (1 << PTD7) | (1 << PTD8);
+    PTC->PSOR |=
+        (1 << PTC1) | (1 << PTC2) | (1 << PTC3) | (1 << PTC5) | (1 << PTC7) | (1 << PTC8) | (1 << PTC9) | (1 << PTC10);
 
     int c_floor = 1;
     int d_floor;
@@ -154,59 +170,59 @@ int main(void)
 void toggleLEDsInCycle()
 {
     // ON -> Wait -> OFF
-    PTD->PCOR |= (1 << PTD8);
+    PTC->PCOR |= (1 << PTC10);
     delay_ms(200);
-    PTD->PSOR |= (1 << PTD8);
-    PTD->PCOR |= (1 << PTD7);
+    PTC->PSOR |= (1 << PTC10);
+    PTC->PCOR |= (1 << PTC9);
     delay_ms(200);
-    PTD->PSOR |= (1 << PTD7);
-    PTD->PCOR |= (1 << PTD6);
+    PTC->PSOR |= (1 << PTC9);
+    PTC->PCOR |= (1 << PTC8);
     delay_ms(200);
-    PTD->PSOR |= (1 << PTD6);
-    PTD->PCOR |= (1 << PTD5);
+    PTC->PSOR |= (1 << PTC8);
+    PTC->PCOR |= (1 << PTC7);
     delay_ms(200);
-    PTD->PSOR |= (1 << PTD5);
-    PTD->PCOR |= (1 << PTD4);
+    PTC->PSOR |= (1 << PTC7);
+    PTC->PCOR |= (1 << PTC5);
     delay_ms(200);
-    PTD->PSOR |= (1 << PTD4);
-    PTD->PCOR |= (1 << PTD3);
+    PTC->PSOR |= (1 << PTC5);
+    PTC->PCOR |= (1 << PTC3);
     delay_ms(200);
-    PTD->PSOR |= (1 << PTD3);
-    PTD->PCOR |= (1 << PTD2);
+    PTC->PSOR |= (1 << PTC3);
+    PTC->PCOR |= (1 << PTC2);
     delay_ms(200);
-    PTD->PSOR |= (1 << PTD2);
-    PTD->PCOR |= (1 << PTD1);
+    PTC->PSOR |= (1 << PTC2);
+    PTC->PCOR |= (1 << PTC1);
     delay_ms(200);
-    PTD->PSOR |= (1 << PTD1);
+    PTC->PSOR |= (1 << PTC1);
 }
 
 void reToggleLEDsInCycle()
 {
     // ON -> Wait -> OFF
-    PTD->PCOR |= (1 << PTD1);
+    PTC->PCOR |= (1 << PTC1);
     delay_ms(200);
-    PTD->PSOR |= (1 << PTD1);
-    PTD->PCOR |= (1 << PTD2);
+    PTC->PSOR |= (1 << PTC1);
+    PTC->PCOR |= (1 << PTC2);
     delay_ms(200);
-    PTD->PSOR |= (1 << PTD2);
-    PTD->PCOR |= (1 << PTD3);
+    PTC->PSOR |= (1 << PTC2);
+    PTC->PCOR |= (1 << PTC3);
     delay_ms(200);
-    PTD->PSOR |= (1 << PTD3);
-    PTD->PCOR |= (1 << PTD4);
+    PTC->PSOR |= (1 << PTC3);
+    PTC->PCOR |= (1 << PTC5);
     delay_ms(200);
-    PTD->PSOR |= (1 << PTD4);
-    PTD->PCOR |= (1 << PTD5);
+    PTC->PSOR |= (1 << PTC5);
+    PTC->PCOR |= (1 << PTC7);
     delay_ms(200);
-    PTD->PSOR |= (1 << PTD5);
-    PTD->PCOR |= (1 << PTD6);
+    PTC->PSOR |= (1 << PTC7);
+    PTC->PCOR |= (1 << PTC8);
     delay_ms(200);
-    PTD->PSOR |= (1 << PTD6);
-    PTD->PCOR |= (1 << PTD7);
+    PTC->PSOR |= (1 << PTC8);
+    PTC->PCOR |= (1 << PTC9);
     delay_ms(200);
-    PTD->PSOR |= (1 << PTD7);
-    PTD->PCOR |= (1 << PTD8);
+    PTC->PSOR |= (1 << PTC9);
+    PTC->PCOR |= (1 << PTC10);
     delay_ms(200);
-    PTD->PSOR |= (1 << PTD8);
+    PTC->PSOR |= (1 << PTC10);
 }
 void num(int nom)
 {
