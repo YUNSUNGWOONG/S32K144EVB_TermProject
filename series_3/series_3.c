@@ -46,28 +46,27 @@ int error = 0;
 char msg_array1[16] = {0x20, 0x2d, 0x2d, 0x2d, 0x57, 0x65, 0x6c,
                        0x63, 0x6f, 0x6d, 0x65, 0x2d, 0x2d, 0x2d}; // 1-row text-char
 
-/* TEXT_Store: ---SELECT FLOOR--- */											
+/* TEXT_Store: ---SELECT FLOOR--- */
 char msg_array2[16] = {0x20, 0x20, 0x53, 0x45, 0x4c, 0x45, 0x43,
                        0x54, 0x20, 0x46, 0x4c, 0x4f, 0x4f, 0x52}; // 2-row text-char
 
-/* TEXT_Store: ---1st FLOOR---*/			
+/* TEXT_Store: ---1st FLOOR---*/
 char msg_array3[16] = {0x20, 0x2d, 0x2d, 0x2d, 0x31, 0x73, 0x74,
-                       0x20, 0x46, 0x4c, 0x4f, 0x4f, 0x52, 0x2d}; // 1-row text-char											 
-/* TEXT_Store: ---2nd FLOOR---*/			
+                       0x20, 0x46, 0x4c, 0x4f, 0x4f, 0x52, 0x2d}; // 1-row text-char
+/* TEXT_Store: ---2nd FLOOR---*/
 char msg_array4[16] = {0x2d, 0x2d, 0x2d, 0x32, 0x6E, 0x64, 0x20,
-                       0x46, 0x4C, 0x4f, 0x4f, 0x52, 0x2d, 0x2d}; // 1-row text-char	
+                       0x46, 0x4C, 0x4f, 0x4f, 0x52, 0x2d, 0x2d}; // 1-row text-char
 
-/* TEXT_Store: ---3rd FLOOR---*/			
+/* TEXT_Store: ---3rd FLOOR---*/
 char msg_array5[16] = {0x2d, 0x2d, 0x2d, 0x33, 0x72, 0x64, 0x20,
-                       0x46, 0x4C, 0x4f, 0x4f, 0x52, 0x2d, 0x2d}; // 1-row text-char	
+                       0x46, 0x4C, 0x4f, 0x4f, 0x52, 0x2d, 0x2d}; // 1-row text-char
 
-/* TEXT_Store: ---4th FLOOR---*/			
+/* TEXT_Store: ---4th FLOOR---*/
 char msg_array6[16] = {0x2d, 0x2d, 0x2d, 0x34, 0x72, 0x64, 0x20,
-                       0x46, 0x4C, 0x4f, 0x4f, 0x52, 0x2d, 0x2d}; // 1-row text-char	
-/* TEXT_Store: ---5th FLOOR---*/														 
+                       0x46, 0x4C, 0x4f, 0x4f, 0x52, 0x2d, 0x2d}; // 1-row text-char
+/* TEXT_Store: ---5th FLOOR---*/
 char msg_array7[16] = {0x2d, 0x2d, 0x2d, 0x35, 0x72, 0x64, 0x20,
-                       0x46, 0x4C, 0x4f, 0x4f, 0x52, 0x2d, 0x2d}; // 1-row text-char	
-											 
+                       0x46, 0x4C, 0x4f, 0x4f, 0x52, 0x2d, 0x2d}; // 1-row text-char
 
 void PORT_init(void)
 {
@@ -152,9 +151,9 @@ void num(int nom);        // FND_DATA(number)
 void Seg_out(int number); // DIGIT_SELECT
 void compareFloors(int *c_floor, int *d_floor);
 void lcdInitialize();
-//void lcdGoingDown();
-//void lcdGoingUp();
-//void lcdDoorOpenAndClose();
+// void lcdGoingDown();
+// void lcdGoingUp();
+// void lcdDoorOpenAndClose();
 /* Function Definition Section (end)*/
 int main(void)
 {
@@ -172,10 +171,8 @@ int main(void)
 
     lcdinit();
     delay_ms(200);
-		int c_floor = 1;
-		int d_floor = 1;
-		
-    
+    int c_floor = 1;
+    int d_floor = 1;
 
     // Ready
     for (int i = 5; i > 0; i--)
@@ -185,7 +182,7 @@ int main(void)
     }
     //& Start
     Seg_out(c_floor); // Initially located on the first floor
-    lcdInitialize(); //-> lcd? ?? ??? ????? ????? ????!
+    lcdInitialize();  //-> lcd? ?? ??? ????? ????? ????!
     while (1)
     {
         // button 1 press
@@ -391,112 +388,112 @@ void compareFloors(int *c_floor, int *d_floor)
 
     if (*c_floor < *d_floor) // -> GOIND UP
     {
-			lcdcharinput(msg_array7[i]); // 1(first) row text-char send to LCD module
-			delay_ms(300);
-			i++;
-			delay_ms(500);
-			lcdinput(0x08); // lcd display off
-			delay_ms(400);
-			lcdinput(0x01); // Clear display
-			delay_ms(500);
-		
-			lcdcharinput(msg_array7[i]); // 1(first) row text-char send to LCD module
-			delay_ms(300);
-			i++;
-			
-			switch (*d_floor) {
+        lcdcharinput(msg_array7[i]); // 1(first) row text-char send to LCD module
+        delay_ms(300);
+        i++;
+        delay_ms(500);
+        lcdinput(0x08); // lcd display off
+        delay_ms(400);
+        lcdinput(0x01); // Clear display
+        delay_ms(500);
+
+        lcdcharinput(msg_array7[i]); // 1(first) row text-char send to LCD module
+        delay_ms(300);
+        i++;
+
+        switch (*d_floor)
+        {
         case 2:
-						while (msg_array4[i] != '\0')
-						{
-							/*
-								lcdcharinput(msg_array4[i]); // 1(first) row text-char send to LCD module
-								delay_ms(300);
-								i++;
-								delay_ms(500);
-								lcdinput(0x08); // lcd display off
-								delay_ms(400);
-								lcdinput(0x01); // Clear display
-								delay_ms(500);
-							*/
-						}
+            while (msg_array4[i] != '\0')
+            {
+                /*
+                    lcdcharinput(msg_array4[i]); // 1(first) row text-char send to LCD module
+                    delay_ms(300);
+                    i++;
+                    delay_ms(500);
+                    lcdinput(0x08); // lcd display off
+                    delay_ms(400);
+                    lcdinput(0x01); // Clear display
+                    delay_ms(500);
+                */
+            }
             break;
         case 3:
-						while (msg_array5[i] != '\0')
-						{
-								lcdcharinput(msg_array5[i]); // 1(first) row text-char send to LCD module
-								delay_ms(300);
-								i++;
-								delay_ms(500);
-								lcdinput(0x08); // lcd display off
-								delay_ms(400);
-								lcdinput(0x01); // Clear display
-								delay_ms(500);
-							
-								lcdcharinput(msg_array5[i]); // 1(first) row text-char send to LCD module
-								delay_ms(300);
-								i++;
-						}
+            while (msg_array5[i] != '\0')
+            {
+                lcdcharinput(msg_array5[i]); // 1(first) row text-char send to LCD module
+                delay_ms(300);
+                i++;
+                delay_ms(500);
+                lcdinput(0x08); // lcd display off
+                delay_ms(400);
+                lcdinput(0x01); // Clear display
+                delay_ms(500);
+
+                lcdcharinput(msg_array5[i]); // 1(first) row text-char send to LCD module
+                delay_ms(300);
+                i++;
+            }
             break;
         case 4:
-						while (msg_array6[i] != '\0')
-						{
-								lcdcharinput(msg_array6[i]); // 1(first) row text-char send to LCD module
-								delay_ms(300);
-								i++;
-								delay_ms(500);
-								lcdinput(0x08); // lcd display off
-								delay_ms(400);
-								lcdinput(0x01); // Clear display
-								delay_ms(500);
-							
-								lcdcharinput(msg_array6[i]); // 1(first) row text-char send to LCD module
-								delay_ms(300);
-								i++;
-						}
-            break;
-				case 5:
-						while (msg_array7[i] != '\0')
-						{   /*
-								lcdcharinput(msg_array7[i]); // 1(first) row text-char send to LCD module
-								delay_ms(300);
-								i++;
-								delay_ms(500);
-								lcdinput(0x08); // lcd display off
-								delay_ms(400);
-								lcdinput(0x01); // Clear display
-								delay_ms(500);
-							
-								lcdcharinput(msg_array7[i]); // 1(first) row text-char send to LCD module
-								delay_ms(300);
-								i++;*/
-								while (msg_array1[i] != '\0')
-								{
-										lcdcharinput(msg_array1[i]); // 1(first) row text-char send to LCD module
-										delay_ms(300);
-										i++;
-								}
+            while (msg_array6[i] != '\0')
+            {
+                lcdcharinput(msg_array6[i]); // 1(first) row text-char send to LCD module
+                delay_ms(300);
+                i++;
+                delay_ms(500);
+                lcdinput(0x08); // lcd display off
+                delay_ms(400);
+                lcdinput(0x01); // Clear display
+                delay_ms(500);
 
-								lcdinput(0x80 + 0x40); // second row
-								delay_ms(200);
-								i = 0;
-								while (msg_array2[i] != '\0')
-								{
-										lcdcharinput(msg_array2[i]); // 2(second) row text-char send to LCD module
-										delay_ms(300);
-										i++;
-								}
-
-								// Lcd off, LCD display clear
-								delay_ms(500);
-								lcdinput(0x08); // lcd display off
-								delay_ms(400);
-								lcdinput(0x01); // Clear display
-								delay_ms(500);
-												}
+                lcdcharinput(msg_array6[i]); // 1(first) row text-char send to LCD module
+                delay_ms(300);
+                i++;
+            }
             break;
-			}
-			
-			
+        case 5:
+            while (msg_array7[i] != '\0')
+            { /*
+                  lcdcharinput(msg_array7[i]); // 1(first) row text-char send to LCD module
+                  delay_ms(300);
+                  i++;
+                  delay_ms(500);
+                  lcdinput(0x08); // lcd display off
+                  delay_ms(400);
+                  lcdinput(0x01); // Clear display
+                  delay_ms(500);
+
+                  lcdcharinput(msg_array7[i]); // 1(first) row text-char send to LCD module
+                  delay_ms(300);
+                  i++;*/
+                while (msg_array1[i] != '\0')
+                {
+                    lcdcharinput(msg_array1[i]); // 1(first) row text-char send to LCD module
+                    delay_ms(300);
+                    i++;
+                }
+
+                lcdinput(0x80 + 0x40); // second row
+                delay_ms(200);
+                i = 0;
+                while (msg_array2[i] != '\0')
+                {
+                    lcdcharinput(msg_array2[i]); // 2(second) row text-char send to LCD module
+                    delay_ms(300);
+                    i++;
+                }
+
+                // Lcd off, LCD display clear
+                delay_ms(500);
+                lcdinput(0x08); // lcd display off
+                delay_ms(400);
+                lcdinput(0x01); // Clear display
+                delay_ms(500);
+            }
+            break;
+        }
+
         // lcdGoingUp();
         for (int i = *c_floor + 1; i <= *d_floor; i++)
         {
