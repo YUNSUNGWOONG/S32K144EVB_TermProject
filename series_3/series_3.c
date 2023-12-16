@@ -406,16 +406,15 @@ void compareFloors(int *c_floor, int *d_floor)
         case 2:
             while (msg_array4[i] != '\0')
             {
-                /*
-                    lcdcharinput(msg_array4[i]); // 1(first) row text-char send to LCD module
-                    delay_ms(300);
-                    i++;
-                    delay_ms(500);
-                    lcdinput(0x08); // lcd display off
-                    delay_ms(400);
-                    lcdinput(0x01); // Clear display
-                    delay_ms(500);
-                */
+
+                lcdcharinput(msg_array4[i]); // 1(first) row text-char send to LCD module
+                delay_ms(300);
+                i++;
+                delay_ms(500);
+                lcdinput(0x08); // lcd display off
+                delay_ms(400);
+                lcdinput(0x01); // Clear display
+                delay_ms(500);
             }
             break;
         case 3:
@@ -454,19 +453,19 @@ void compareFloors(int *c_floor, int *d_floor)
             break;
         case 5:
             while (msg_array7[i] != '\0')
-            { /*
-                  lcdcharinput(msg_array7[i]); // 1(first) row text-char send to LCD module
-                  delay_ms(300);
-                  i++;
-                  delay_ms(500);
-                  lcdinput(0x08); // lcd display off
-                  delay_ms(400);
-                  lcdinput(0x01); // Clear display
-                  delay_ms(500);
+            {
+                lcdcharinput(msg_array7[i]); // 1(first) row text-char send to LCD module
+                delay_ms(300);
+                i++;
+                delay_ms(500);
+                lcdinput(0x08); // lcd display off
+                delay_ms(400);
+                lcdinput(0x01); // Clear display
+                delay_ms(500);
 
-                  lcdcharinput(msg_array7[i]); // 1(first) row text-char send to LCD module
-                  delay_ms(300);
-                  i++;*/
+                lcdcharinput(msg_array7[i]); // 1(first) row text-char send to LCD module
+                delay_ms(300);
+                i++;
                 while (msg_array1[i] != '\0')
                 {
                     lcdcharinput(msg_array1[i]); // 1(first) row text-char send to LCD module
