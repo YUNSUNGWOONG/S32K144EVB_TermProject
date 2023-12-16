@@ -1,6 +1,8 @@
 # S32K144EVB_TermProject
 마이크로프로세서 설계실험 TermProject - 엘리베이터제작하기
 
+![image-20231216154453696](./images/image-20231216154453696.png)
+
 ### 첫번째 ref코드>스위치와 LED가 연동되게 하기(linkSwitchToLED.c)
 'SW1'누르면 누르면 error값 만큼 toggleLEDsInCycle()가 실행되게 하기<br>
 
